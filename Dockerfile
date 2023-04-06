@@ -10,8 +10,8 @@ RUN apk --no-cache add alpine-sdk coreutils cmake linux-headers perl musl m4 sud
 WORKDIR /home/builder
 RUN chmod 777 /home/builder
 ENV VAR 3.14-stable
-RUN wget https://gitlab.alpinelinux.org/alpine/aports/-/archive/$VAR/aports-$VAR && tar -xf aports-$VAR.tar.gz
-
+RUN wget https://gitlab.alpinelinux.org/alpine/aports/-/archive/$VAR/aports-$VAR.tar.gz && tar -xf aports-$VAR.tar.gz
+#https://gitlab.alpinelinux.org/alpine/aports/-/archive/3.14-stable/aports-3.14-stable.tar.gz
 
 RUN su -c "mkdir hello && cp -r /home/builder/aports-$VAR/main/unrar ./hello/ \
    && cd hello/unrar && abuild-keygen -i -n -a && abuild -r" builder
