@@ -1,0 +1,52 @@
+name: Release Alpine-SDK
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - linux/amd64
+        include:
+          -
+            arch: linux/amd64
+            dist: amd64
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Create outputs folder
+        run: mkdir outputs
+      -
+        name: Build alpinesdk
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile1
+          platforms: ${{ matrix.arch }}
+          outputs: type=tar,dest=outputs/dist-${{ matrix.dist }}.tar
+          push: false
+          tags: alpinesdk:latest
+      -
+        name: Extract artifacts
+        run: |
+          cd outputs
+          tar xf dist-${{ matrix.dist }}.tar
+          rm -rf *.tar
+          ls -a
+          tar -czf packages.tar.gz packages
+          rm -rf packages && ls -a
+      -
+        name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Pancakes
+          path: outputs/*
